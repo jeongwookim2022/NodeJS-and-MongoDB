@@ -14,7 +14,7 @@ body {
   font-weight: bold;
 }
 
-/* LIST.EJS */
+/* LIST.EJS eller COMMON */
 .grey-bg {
   background: #eee;
 }
@@ -35,4 +35,42 @@ body {
   font-size: 13px;
   margin: 5px;
   color: grey;
+}
+
+/* WRITING */
+input,
+div {
+  box-sizing: border-box;
+}
+.form-box {
+  background: white;
+  padding: 25px;
+  margin: 20px;
+  border-radius: 10px;
+}
+.form-box input {
+  padding: 10px;
+  font-size: 16px;
+  width: 100%;
+  border: 1px solid black;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+.form-box button {
+  padding: 10px;
+  border: none;
+  background: lightgrey;
+  border-radius: 5px;
+}
+
+/* DETAIL */
+.detail-bg {
+  background: white;
+  padding: 15px;
+  margin-top: 10px;
+}
+
+/* COMMON */
+.no-line {
+  text-decoration: none;
 }

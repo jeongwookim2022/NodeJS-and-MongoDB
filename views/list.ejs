@@ -3,18 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <!-- CSS -->
     <link rel="stylesheet" href="main.css" />
+
     <title>Document</title>
   </head>
   <body class="grey-bg">
+    <%- include('nav.ejs') %>
+
     <div class="white-bg">
       <% for(let i = 0; i < post.length; i++){ %>
-      <div class="list-box">
-        <h4><%= post[i].title %></h4>
-        <p><%= post[i].content %></p>
-      </div>
+      <!-- Button to detail page -->
+      <a class="no-line" href="/detail/<%= post[i]._id %>">
+        <div class="list-box">
+          <h4><%= post[i].title %></h4>
+          <p><%= post[i].content %></p>
+        </div>
+      </a>
+      <!--  -->
       <% } %>
     </div>
   </body>

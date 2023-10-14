@@ -1,13 +1,15 @@
 const express = require("express");
 const app = express();
+// DB
+const { MongoClient, ObjectId } = require("mongodb");
 
-// CSS DIR
+// STATIC: CSS DIR
 app.use(express.static(__dirname + "/public"));
 // EJS
 app.set("view engine", "ejs");
-
-// DB
-const { MongoClient } = require("mongodb");
+// TO USE 'Request.body': to get data from users via 'form'
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 let db;
 const url =
@@ -45,10 +47,49 @@ app.get("/about", (request, response) => {
   response.sendFile(__dirname + "/about.html");
 });
 
-// POST LISTs
+// COLLECTIION: POST LISTs
 app.get("/list", async (request, response) => {
-  // response.send("Posts in DB");
-
   let result = await db.collection("post").find().toArray();
-  response.render(__dirname + "/views/list.ejs", { post: result });
+  response.render("list.ejs", { post: result });
+});
+
+// WRITING
+app.get("/writing", (request, response) => {
+  response.render("writing.ejs");
+});
+
+app.post("/addpost", async (request, response) => {
+  const data = request.body; // Getting data from users
+  console.log(data);
+
+  try {
+    if (data.title.length == 0 || data.content.length == 0) {
+      response.send("Title or Content can't not be empty!");
+    } else {
+      await db
+        .collection("post")
+        .insertOne({ title: data.title, content: data.content });
+
+      response.redirect("/list");
+    }
+  } catch (e) {
+    response.status(500).send("SERVER ERROR:", e);
+  }
+});
+
+// URL PARAMTER
+app.get("/detail/:detailId", async (request, response) => {
+  try {
+    const id = request.params.detailId;
+    const result = await db
+      .collection("post")
+      .findOne({ _id: new ObjectId(id) });
+    if (result == null) {
+      response.status(404).send("That's not a valid detailId.");
+    } else {
+      response.render("detail.ejs", { data: result });
+    }
+  } catch (e) {
+    response.status(404).send("That's not a valid detailId.");
+  }
 });
