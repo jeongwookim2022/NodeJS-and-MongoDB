@@ -14,12 +14,15 @@
     <div class="white-bg">
       <% for(let i = 0; i < post.length; i++){ %>
       <!-- Button to detail page -->
-      <a class="no-line" href="/detail/<%= post[i]._id %>">
-        <div class="list-box">
-          <h4><%= post[i].title %></h4>
-          <p><%= post[i].content %></p>
-        </div>
-      </a>
+      <div class="list-box">
+        <h4>
+          <a class="no-line" href="/detail/<%= post[i]._id %>">
+            <%= post[i].title %>
+          </a>
+          <a class="no-line color-stay" href="/edit/<%= post[i]._id %>">🖋</a>
+        </h4>
+        <p><%= post[i].content %></p>
+      </div>
       <!--  -->
       <% } %>
     </div>

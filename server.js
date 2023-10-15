@@ -60,7 +60,6 @@ app.get("/writing", (request, response) => {
 
 app.post("/addpost", async (request, response) => {
   const data = request.body; // Getting data from users
-  console.log(data);
 
   try {
     if (data.title.length == 0 || data.content.length == 0) {
@@ -77,13 +76,14 @@ app.post("/addpost", async (request, response) => {
   }
 });
 
-// URL PARAMTER
+// DETAIL: URL PARAMTER
 app.get("/detail/:detailId", async (request, response) => {
   try {
     const id = request.params.detailId;
     const result = await db
       .collection("post")
       .findOne({ _id: new ObjectId(id) });
+
     if (result == null) {
       response.status(404).send("That's not a valid detailId.");
     } else {
@@ -91,5 +91,37 @@ app.get("/detail/:detailId", async (request, response) => {
     }
   } catch (e) {
     response.status(404).send("That's not a valid detailId.");
+  }
+});
+
+// EDIT
+app.get("/edit/:id", async (request, response) => {
+  const id = request.params.id;
+  const result = await db.collection("post").findOne({ _id: new ObjectId(id) });
+
+  response.render("edit.ejs", { data: result });
+});
+
+app.post("/editpost", async (request, response) => {
+  const newData = request.body;
+
+  // EXCEPTION and DATA VALIDATION CHECK
+  try {
+    if (newData.title.length !== 0 && newData.content.length !== 0) {
+      await db
+        .collection("post")
+        .updateOne(
+          { _id: new ObjectId(newData.id) },
+          { $set: { title: newData.title, content: newData.content } }
+        );
+
+      response.redirect("/list");
+    } else {
+      response.send(
+        "You should write at least one alphabet for title and content!"
+      );
+    }
+  } catch (e) {
+    response.status(500).send("That's not a valid data for title and content.");
   }
 });

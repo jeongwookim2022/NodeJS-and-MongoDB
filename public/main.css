@@ -74,3 +74,6 @@ div {
 .no-line {
   text-decoration: none;
 }
+.color-stay {
+  color: inherit;
+}
