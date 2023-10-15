@@ -13,18 +13,62 @@
 
     <div class="white-bg">
       <% for(let i = 0; i < post.length; i++){ %>
-      <!-- Button to detail page -->
       <div class="list-box">
         <h4>
+          <!-- <input id="hidden-id" value="<%= post[i]._id %>" hidden /> -->
+
           <a class="no-line" href="/detail/<%= post[i]._id %>">
             <%= post[i].title %>
           </a>
           <a class="no-line color-stay" href="/edit/<%= post[i]._id %>">🖋</a>
+          <span class="delete" data-id="<%= post[i]._id %>">❌</span>
         </h4>
         <p><%= post[i].content %></p>
       </div>
-      <!--  -->
       <% } %>
     </div>
+
+    <!-- JS for AJAX -->
+    <script>
+      // const ids = document.querySelectorAll("#hidden-id");
+      // console.log(ids[0].value);
+      const deleteBtns = document.querySelectorAll(".delete");
+      console.log(deleteBtns[0]);
+
+      for (let i = 0; i < deleteBtns.length; i++) {
+        deleteBtns[i].addEventListener("click", async (e) => {
+          // Sending DELETE request Without REFRESTH
+          // (1)
+          // fetch("/delete", {
+          //   method: "DELETE",
+          //   headers: {
+          //     "Content-Type": "application/json",
+          //   },
+          //   body: JSON.stringify({ id: ids[i].value }),
+          // });
+
+          // (2)
+          const id = e.target.dataset.id;
+          await fetch(`/delete?docid=${id}`, {
+            method: "DELETE",
+          })
+            .then((r) => {
+              if (r.status == 200) {
+                return r.text();
+              } else {
+                // Server Error
+                alert("SORRY, SERVER ERROR!");
+              }
+            })
+            .then((r) => {
+              e.target.parentElement.parentElement.style.display = "none";
+            })
+            .catch((e) => {
+              // INTERNET CONNECTION ISSUE and so on.
+              alert(`ERROR: ${e}`);
+            });
+        });
+      }
+    </script>
   </body>
 </html>

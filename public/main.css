@@ -77,3 +77,8 @@ div {
 .color-stay {
   color: inherit;
 }
+
+/* DELETE */
+.delete {
+  cursor: pointer;
+}

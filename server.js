@@ -2,12 +2,15 @@ const express = require("express");
 const app = express();
 // DB
 const { MongoClient, ObjectId } = require("mongodb");
+// METHOD-OVERRIDE: Allows to use 'put' & 'delete' in 'form'.
+const methodOverride = require("method-override");
+app.use(methodOverride("_method"));
 
 // STATIC: CSS DIR
 app.use(express.static(__dirname + "/public"));
 // EJS
 app.set("view engine", "ejs");
-// TO USE 'Request.body': to get data from users via 'form'
+// TO USE 'Request.body': to get data from users via 'form'.
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -29,6 +32,7 @@ new MongoClient(url)
     console.log(err);
   });
 
+////////////////////////////////////////////////////////////////////////////////////////////////
 app.get("/", (request, response) => {
   // response.send("Nice to meet you!");
   response.sendFile(__dirname + "/index.html");
@@ -102,7 +106,7 @@ app.get("/edit/:id", async (request, response) => {
   response.render("edit.ejs", { data: result });
 });
 
-app.post("/editpost", async (request, response) => {
+app.put("/editpost", async (request, response) => {
   const newData = request.body;
 
   // EXCEPTION and DATA VALIDATION CHECK
@@ -124,4 +128,22 @@ app.post("/editpost", async (request, response) => {
   } catch (e) {
     response.status(500).send("That's not a valid data for title and content.");
   }
+});
+
+// MODIFY Syntaxes
+// app.put("/aaaa", async (request, response) => {
+//   await db.collection("post").updateOne({ _id: 1 }, { $inc: { likes: 5 } });
+//   response.redirect("/");
+//   await db
+//     .collection("post")
+//     .updateMany({ like: { $gt: 10 } }, { $set: { likes: 5 } });
+//   response.redirect("/");
+// });
+
+// DELETE
+app.delete("/delete", async (request, response) => {
+  const docId = request.query.docid;
+  await db.collection("post").deleteOne({ _id: new ObjectId(docId) });
+
+  response.send("Deleted");
 });

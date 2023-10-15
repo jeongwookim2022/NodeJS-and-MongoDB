@@ -11,8 +11,9 @@
   <body class="grey-bg">
     <%- include('nav.ejs')%>
 
-    <form class="form-box grey-bg" action="/editpost" method="POST">
+    <form class="form-box grey-bg" action="/editpost?_method=PUT" method="POST">
       <h4>Edit your Post</h4>
+
       <input name="id" value="<%= data._id %>" hidden />
       <input name="title" type="text" value="<%= data.title %>" />
       <input name="content" type="text" value="<%= data.content %>" />
