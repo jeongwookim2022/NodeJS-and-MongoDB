@@ -36,6 +36,10 @@ body {
   margin: 5px;
   color: grey;
 }
+/* BUTTONS in LIST */
+.buttons {
+  text-align: center;
+}
 
 /* WRITING */
 input,

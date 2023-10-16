@@ -52,10 +52,10 @@ app.get("/about", (request, response) => {
 });
 
 // COLLECTIION: POST LISTs
-app.get("/list", async (request, response) => {
-  let result = await db.collection("post").find().toArray();
-  response.render("list.ejs", { post: result });
-});
+// app.get("/list", async (request, response) => {
+//   let result = await db.collection("post").find().toArray();
+//   response.render("list.ejs", { allPost: result });
+// });
 
 // WRITING
 app.get("/writing", (request, response) => {
@@ -146,4 +146,18 @@ app.delete("/delete", async (request, response) => {
   await db.collection("post").deleteOne({ _id: new ObjectId(docId) });
 
   response.send("Deleted");
+});
+
+// PAGINATION
+app.get("/list/:pgnum", async (req, res) => {
+  let pgnum = req.params.pgnum;
+
+  let allPost = await db.collection("post").find().toArray();
+  let result = await db
+    .collection("post")
+    .find()
+    .skip((pgnum - 1) * 5)
+    .limit(5)
+    .toArray();
+  res.render("list.ejs", { post: result, allPost: allPost });
 });
