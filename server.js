@@ -33,6 +33,22 @@ new MongoClient(url)
   });
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
+const session = require("express-session");
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+
+app.use(passport.initialize());
+app.use(
+  session({
+    secret: "암호화에 쓸 비번", // PW for encryption of Session string.
+    resave: false, // Renew session whenever users do get/post requests?
+    saveUninitialized: false, // Create session although users are not logged in?
+  })
+);
+
+app.use(passport.session());
+////////////////////////////////////////////////////////////////////////////////////////////////
+
 app.get("/", (request, response) => {
   // response.send("Nice to meet you!");
   response.sendFile(__dirname + "/index.html");
@@ -160,4 +176,38 @@ app.get("/list/:pgnum", async (req, res) => {
     .limit(5)
     .toArray();
   res.render("list.ejs", { post: result, allPost: allPost });
+});
+
+// LOGIN
+passport.use(
+  new LocalStrategy(async (writtenUsername, writtenPW, cb) => {
+    let result = await db
+      .collection("user")
+      .findOne({ username: writtenUsername });
+    if (!result) {
+      return cb(null, false, { message: "NO USERNAME IN DB" });
+    }
+    if (result.password == writtenPW) {
+      return cb(null, result);
+    } else {
+      return cb(null, false, { message: "PW is not correct." });
+    }
+  })
+); // passport.authenticate("local")() --> To use this func above.
+
+app.get("/login", async (req, res) => {
+  res.render("login.ejs");
+});
+app.post("/login", async (req, res, next) => {
+  passport.authenticate("local", (error, user, info) => {
+    // FAIL
+    if (error) return res.status(500).json(error); // .json: send object or array data to users.
+    if (!user) return res.status(401).json(info.message);
+    // SUCCEED
+    req.logIn(user, (err) => {
+      if (err) return next(err);
+
+      res.redirect("/");
+    });
+  })(req, res, next);
 });

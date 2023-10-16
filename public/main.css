@@ -37,8 +37,11 @@ body {
   color: grey;
 }
 /* BUTTONS in LIST */
-.buttons {
+.pagination {
   text-align: center;
+}
+.pagination button {
+  background-color: aliceblue;
 }
 
 /* WRITING */
